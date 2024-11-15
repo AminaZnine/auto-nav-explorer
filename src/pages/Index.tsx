@@ -37,16 +37,6 @@ const Index = () => {
     toast.error("Emergency stop activated");
   };
 
-  const handleTurnLeft = () => {
-    // In a real implementation, this would send a command to the car
-    toast.info("Turning left");
-  };
-
-  const handleTurnRight = () => {
-    // In a real implementation, this would send a command to the car
-    toast.info("Turning right");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -62,8 +52,6 @@ const Index = () => {
               isRunning={isRunning}
               onToggleRunning={handleToggleRunning}
               onEmergencyStop={handleEmergencyStop}
-              onTurnLeft={handleTurnLeft}
-              onTurnRight={handleTurnRight}
             />
           </div>
           <div className="space-y-6">
