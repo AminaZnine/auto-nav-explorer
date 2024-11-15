@@ -4,6 +4,7 @@ import { CarStatus } from "@/components/CarStatus";
 import { CoordinateInput } from "@/components/CoordinateInput";
 import { Controls } from "@/components/Controls";
 import { DirectionalControls } from "@/components/DirectionalControls";
+import { SpeedControl } from "@/components/SpeedControl";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -15,12 +16,13 @@ const Index = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [waypoints, setWaypoints] = useState<Coordinate[]>([]);
+  const [speed, setSpeed] = useState(15);
 
   // Simulated car status - in real app, this would come from Arduino
   const carStatus = {
     battery: 85,
     obstacleDistance: null, // Set to null since we're not using it yet
-    speed: 15,
+    speed: speed,
   };
 
   const handleAddWaypoint = (coordinate: Coordinate) => {
@@ -35,6 +37,7 @@ const Index = () => {
 
   const handleEmergencyStop = () => {
     setIsRunning(false);
+    setSpeed(0);
     toast.error("Emergency stop activated");
   };
 
@@ -46,6 +49,12 @@ const Index = () => {
       right: "Turning right"
     };
     toast.info(directionMessages[direction]);
+    // Here you would add the actual Bluetooth communication logic
+  };
+
+  const handleSpeedChange = (newSpeed: number) => {
+    setSpeed(newSpeed);
+    toast.info(`Speed set to ${newSpeed} km/h`);
     // Here you would add the actual Bluetooth communication logic
   };
 
@@ -65,6 +74,7 @@ const Index = () => {
               onToggleRunning={handleToggleRunning}
               onEmergencyStop={handleEmergencyStop}
             />
+            <SpeedControl speed={speed} onSpeedChange={handleSpeedChange} />
             <DirectionalControls onDirectionPress={handleDirectionPress} />
           </div>
           <div className="space-y-6">
