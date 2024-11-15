@@ -3,6 +3,7 @@ import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { CarStatus } from "@/components/CarStatus";
 import { CoordinateInput } from "@/components/CoordinateInput";
 import { Controls } from "@/components/Controls";
+import { DirectionalControls } from "@/components/DirectionalControls";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -18,7 +19,7 @@ const Index = () => {
   // Simulated car status - in real app, this would come from Arduino
   const carStatus = {
     battery: 85,
-    obstacleDistance: 150,
+    obstacleDistance: null, // Set to null since we're not using it yet
     speed: 15,
   };
 
@@ -37,6 +38,17 @@ const Index = () => {
     toast.error("Emergency stop activated");
   };
 
+  const handleDirectionPress = (direction: 'up' | 'down' | 'left' | 'right') => {
+    const directionMessages = {
+      up: "Moving forward",
+      down: "Moving backward",
+      left: "Turning left",
+      right: "Turning right"
+    };
+    toast.info(directionMessages[direction]);
+    // Here you would add the actual Bluetooth communication logic
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -53,6 +65,7 @@ const Index = () => {
               onToggleRunning={handleToggleRunning}
               onEmergencyStop={handleEmergencyStop}
             />
+            <DirectionalControls onDirectionPress={handleDirectionPress} />
           </div>
           <div className="space-y-6">
             <CoordinateInput onAddWaypoint={handleAddWaypoint} />
