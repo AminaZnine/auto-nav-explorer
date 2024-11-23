@@ -19,7 +19,7 @@ This project is built with React, TailwindCSS, and shadcn/ui components, creatin
 1. Clone the repository
 2. Install dependencies: `npm install`
 3. Start the development server: `npm run dev`
-4. Open [http://localhost:5173](http://localhost:5173) to view it in the browser
+4. Open (https://auto-nav-explorer.lovable.app/) to view it in the browser
 
 ## Contributing
 
