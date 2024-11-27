@@ -8,6 +8,7 @@ import { SpeedControl } from "@/components/SpeedControl";
 import { ModeSelector } from "@/components/ModeSelector";
 import { WaypointMap } from "@/components/WaypointMap";
 import { toast } from "sonner";
+import { Bot, Navigation } from "lucide-react";
 
 interface Coordinate {
   lat: number;
@@ -66,19 +67,22 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4 sm:p-6 lg:p-8 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-purple-50/50 dark:to-purple-950/10 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-light to-purple-dark">
-            Autonomous Car Control
-          </h1>
+          <div className="flex items-center gap-3">
+            <Bot className="w-8 h-8 text-purple-500" />
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-700">
+              Auto-Nav Explorer
+            </h1>
+            <Navigation className="w-8 h-8 text-purple-500" />
+          </div>
           <ConnectionStatus isConnected={isConnected} />
         </div>
 
-        <ModeSelector mode={mode} onModeChange={handleModeChange} />
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
+            <ModeSelector mode={mode} onModeChange={handleModeChange} />
             <CarStatus {...carStatus} />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
             <Controls
@@ -95,7 +99,10 @@ const Index = () => {
             <CoordinateInput onAddWaypoint={handleAddWaypoint} />
             <WaypointMap onAddWaypoint={handleAddWaypoint} />
             <div className="glass-panel p-4 space-y-4">
-              <h2 className="text-lg font-semibold">Waypoints</h2>
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Navigation className="w-5 h-5 text-purple-500" />
+                Waypoints
+              </h2>
               {waypoints.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No waypoints added yet</p>
               ) : (
