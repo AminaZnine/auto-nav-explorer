@@ -16,7 +16,7 @@ export const ModeSelector = ({ mode, onModeChange }: ModeSelectorProps) => {
       </div>
       
       <RadioGroup
-        defaultValue={mode}
+        value={mode}
         onValueChange={(value: "manual" | "waypoint") => onModeChange(value)}
         className="grid grid-cols-1 sm:grid-cols-2 gap-4"
       >
