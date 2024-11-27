@@ -33,7 +33,7 @@ export const Controls = ({ isRunning, onToggleRunning, onEmergencyStop }: Contro
         </button>
         <button
           onClick={onEmergencyStop}
-          className="flex-1 control-button bg-car-error text-white"
+          className="flex-1 control-button bg-gradient-to-br from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold"
         >
           <Square className="w-4 h-4 inline-block mr-2" />
           Emergency Stop
