@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Wifi, WifiOff, Bluetooth, BluetoothOff } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
@@ -7,7 +8,7 @@ interface ConnectionStatusProps {
 }
 
 export const ConnectionStatus = ({ isConnected }: ConnectionStatusProps) => {
-  const [isWifiMode, setIsWifiMode] = React.useState(true);
+  const [isWifiMode, setIsWifiMode] = useState(true);
 
   const handleModeChange = (checked: boolean) => {
     setIsWifiMode(checked);
