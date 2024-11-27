@@ -5,6 +5,8 @@ import { CoordinateInput } from "@/components/CoordinateInput";
 import { Controls } from "@/components/Controls";
 import { DirectionalControls } from "@/components/DirectionalControls";
 import { SpeedControl } from "@/components/SpeedControl";
+import { ModeSelector } from "@/components/ModeSelector";
+import { WaypointMap } from "@/components/WaypointMap";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -17,6 +19,7 @@ const Index = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [waypoints, setWaypoints] = useState<Coordinate[]>([]);
   const [speed, setSpeed] = useState(15);
+  const [mode, setMode] = useState<"manual" | "waypoint">("manual");
 
   // Simulated car status - in real app, this would come from Arduino
   const carStatus = {
@@ -42,6 +45,7 @@ const Index = () => {
   };
 
   const handleDirectionPress = (direction: 'up' | 'down' | 'left' | 'right') => {
+    if (mode === "waypoint") return;
     const directionMessages = {
       up: "Moving forward",
       down: "Moving backward",
@@ -49,13 +53,16 @@ const Index = () => {
       right: "Turning right"
     };
     toast.info(directionMessages[direction]);
-    // Here you would add the actual Bluetooth communication logic
   };
 
   const handleSpeedChange = (newSpeed: number) => {
     setSpeed(newSpeed);
-    // Here you would send the speed update via Bluetooth
     console.log("Speed updated:", newSpeed);
+  };
+
+  const handleModeChange = (newMode: "manual" | "waypoint") => {
+    setMode(newMode);
+    toast.info(`Switched to ${newMode} mode`);
   };
 
   return (
@@ -66,6 +73,8 @@ const Index = () => {
           <ConnectionStatus isConnected={isConnected} />
         </div>
 
+        <ModeSelector mode={mode} onModeChange={handleModeChange} />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-6">
             <CarStatus {...carStatus} />
@@ -75,10 +84,13 @@ const Index = () => {
               onToggleRunning={handleToggleRunning}
               onEmergencyStop={handleEmergencyStop}
             />
-            <DirectionalControls onDirectionPress={handleDirectionPress} />
+            <div className={mode === "waypoint" ? "opacity-50 pointer-events-none" : ""}>
+              <DirectionalControls onDirectionPress={handleDirectionPress} />
+            </div>
           </div>
-          <div className="space-y-6">
+          <div className={`space-y-6 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
             <CoordinateInput onAddWaypoint={handleAddWaypoint} />
+            <WaypointMap onAddWaypoint={handleAddWaypoint} />
             <div className="glass-panel rounded-xl p-4 space-y-4">
               <h2 className="text-lg font-semibold">Waypoints</h2>
               {waypoints.length === 0 ? (
@@ -91,7 +103,7 @@ const Index = () => {
                       className="flex items-center justify-between p-2 rounded-lg bg-white/50"
                     >
                       <span className="text-sm">
-                        Point {index + 1}: ({wp.lat}, {wp.lng})
+                        Point {index + 1}: ({wp.lat.toFixed(6)}, {wp.lng.toFixed(6)})
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {index === 0 ? "Current Target" : "Queued"}
