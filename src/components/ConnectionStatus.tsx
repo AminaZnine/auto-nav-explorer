@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wifi, WifiOff, Bluetooth, BluetoothOff, Robot } from "lucide-react";
+import { Wifi, WifiOff, Bluetooth, BluetoothOff, Bot } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
@@ -26,7 +26,7 @@ export const ConnectionStatus = ({ isConnected }: ConnectionStatusProps) => {
   return (
     <div className="glass-panel rounded-xl p-4 space-y-4 w-full sm:w-auto">
       <div className="flex items-center gap-2 mb-4">
-        <Robot className="w-5 h-5 text-[#9b87f5]" />
+        <Bot className="w-5 h-5 text-[#9b87f5]" />
         <h3 className="text-sm font-semibold text-[#7E69AB]">Robot Car Connection</h3>
       </div>
 
