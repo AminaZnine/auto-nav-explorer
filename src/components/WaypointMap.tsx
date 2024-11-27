@@ -22,6 +22,7 @@ export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
+    // Convert pixel coordinates to lat/lng (simplified mapping)
     const lat = ((rect.height - y) / rect.height) * 90;
     const lng = ((x / rect.width) * 360) - 180;
 
@@ -30,21 +31,21 @@ export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-[#9b87f5]">Visual Waypoint Map</h2>
+    <div className="glass-panel rounded-xl p-4 space-y-4">
+      <h2 className="text-lg font-semibold">Visual Waypoint Map</h2>
       <div
         ref={mapRef}
-        className="relative w-full h-[300px] bg-[#1A1F2C]/50 rounded-lg cursor-crosshair overflow-hidden border border-[#9b87f5]/20"
+        className="relative w-full h-[300px] bg-slate-100 rounded-lg cursor-crosshair"
         onClick={handleClick}
       >
         <div className="absolute inset-0 grid grid-cols-8 grid-rows-8">
           {Array.from({ length: 64 }).map((_, i) => (
-            <div key={i} className="border border-[#9b87f5]/10" />
+            <div key={i} className="border border-slate-200" />
           ))}
         </div>
-        <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#9b87f5] w-6 h-6 animate-pulse" />
+        <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6" />
       </div>
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-muted-foreground">
         Click anywhere on the map to add a waypoint. The grid represents a simplified world map.
       </p>
     </div>
