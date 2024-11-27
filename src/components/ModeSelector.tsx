@@ -1,6 +1,6 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Bot, GameController2, MapPin } from "lucide-react";
+import { Bot, Gamepad, MapPin } from "lucide-react";
 
 interface ModeSelectorProps {
   mode: "manual" | "waypoint";
@@ -26,7 +26,7 @@ export const ModeSelector = ({ mode, onModeChange }: ModeSelectorProps) => {
         >
           <RadioGroupItem value="manual" id="manual" className="text-[#9b87f5]" />
           <Label htmlFor="manual" className="flex items-center gap-2 cursor-pointer">
-            <GameController2 className="w-4 h-4 text-[#9b87f5]" />
+            <Gamepad className="w-4 h-4 text-[#9b87f5]" />
             <span>Manual Control</span>
           </Label>
         </div>
