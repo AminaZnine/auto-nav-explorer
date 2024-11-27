@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ThemeProvider defaultTheme="dark" attribute="class">
+  <ThemeProvider defaultTheme="light" attribute="class">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
