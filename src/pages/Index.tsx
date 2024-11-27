@@ -66,16 +66,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Autonomous Car Control</h1>
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4 sm:p-6 lg:p-8 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-light to-purple-dark">
+            Autonomous Car Control
+          </h1>
           <ConnectionStatus isConnected={isConnected} />
         </div>
 
         <ModeSelector mode={mode} onModeChange={handleModeChange} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <CarStatus {...carStatus} />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
@@ -88,10 +90,11 @@ const Index = () => {
               <DirectionalControls onDirectionPress={handleDirectionPress} />
             </div>
           </div>
+          
           <div className={`space-y-6 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
             <CoordinateInput onAddWaypoint={handleAddWaypoint} />
             <WaypointMap onAddWaypoint={handleAddWaypoint} />
-            <div className="glass-panel rounded-xl p-4 space-y-4">
+            <div className="glass-panel p-4 space-y-4">
               <h2 className="text-lg font-semibold">Waypoints</h2>
               {waypoints.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No waypoints added yet</p>
@@ -100,7 +103,7 @@ const Index = () => {
                   {waypoints.map((wp, index) => (
                     <li
                       key={index}
-                      className="flex items-center justify-between p-2 rounded-lg bg-white/50"
+                      className="flex items-center justify-between p-2 rounded-lg bg-background/50 dark:bg-background/20 transition-colors duration-200 hover:bg-background/70 dark:hover:bg-background/30"
                     >
                       <span className="text-sm">
                         Point {index + 1}: ({wp.lat.toFixed(6)}, {wp.lng.toFixed(6)})
