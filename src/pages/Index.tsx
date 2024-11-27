@@ -66,46 +66,52 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Autonomous Car Control</h1>
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#2C1F3D] p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#9b87f5] to-[#D6BCFA] text-transparent bg-clip-text">
+            Autonomous Car Control
+          </h1>
           <ConnectionStatus isConnected={isConnected} />
         </div>
 
-        <ModeSelector mode={mode} onModeChange={handleModeChange} />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <CarStatus {...carStatus} />
-            <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
-            <Controls
-              isRunning={isRunning}
-              onToggleRunning={handleToggleRunning}
-              onEmergencyStop={handleEmergencyStop}
-            />
-            <div className={mode === "waypoint" ? "opacity-50 pointer-events-none" : ""}>
+            <div className="glass-panel rounded-xl p-6 space-y-6 backdrop-blur-lg">
+              <CarStatus {...carStatus} />
+              <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
+              <Controls
+                isRunning={isRunning}
+                onToggleRunning={handleToggleRunning}
+                onEmergencyStop={handleEmergencyStop}
+              />
+            </div>
+            <div className={`glass-panel rounded-xl p-6 ${mode === "waypoint" ? "opacity-50 pointer-events-none" : ""}`}>
               <DirectionalControls onDirectionPress={handleDirectionPress} />
             </div>
           </div>
+
           <div className={`space-y-6 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
-            <CoordinateInput onAddWaypoint={handleAddWaypoint} />
-            <WaypointMap onAddWaypoint={handleAddWaypoint} />
-            <div className="glass-panel rounded-xl p-4 space-y-4">
-              <h2 className="text-lg font-semibold">Waypoints</h2>
+            <ModeSelector mode={mode} onModeChange={handleModeChange} />
+            <div className="glass-panel rounded-xl p-6 space-y-6">
+              <CoordinateInput onAddWaypoint={handleAddWaypoint} />
+              <WaypointMap onAddWaypoint={handleAddWaypoint} />
+            </div>
+            <div className="glass-panel rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-[#9b87f5] mb-4">Waypoints</h2>
               {waypoints.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No waypoints added yet</p>
+                <p className="text-gray-400">No waypoints added yet</p>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {waypoints.map((wp, index) => (
                     <li
                       key={index}
-                      className="flex items-center justify-between p-2 rounded-lg bg-white/50"
+                      className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-[#9b87f5]/20"
                     >
-                      <span className="text-sm">
+                      <span className="text-sm text-gray-300">
                         Point {index + 1}: ({wp.lat.toFixed(6)}, {wp.lng.toFixed(6)})
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-[#9b87f5]">
                         {index === 0 ? "Current Target" : "Queued"}
                       </span>
                     </li>
