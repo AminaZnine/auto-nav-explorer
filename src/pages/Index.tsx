@@ -78,19 +78,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <header className="flex justify-between items-center">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+        <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <Bot className="w-8 h-8 text-purple-500" />
-            <h1 className="text-2xl font-bold text-purple-500">Auto-Nav Explorer</h1>
-            <Navigation className="w-8 h-8 text-purple-500" />
+            <Bot className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
+            <h1 className="text-xl sm:text-2xl font-bold text-purple-500">Auto-Nav Explorer</h1>
+            <Navigation className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
           </div>
           <ConnectionStatus isConnected={isConnected} />
         </header>
 
-        <main className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-6">
+        <main className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="space-y-4">
             <ModeSelector mode={mode} onModeChange={handleModeChange} />
             <CarStatus {...carStatus} />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
@@ -104,9 +104,9 @@ const Index = () => {
             </div>
           </div>
           
-          <div className={`space-y-6 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
+          <div className={`space-y-4 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
             <WaypointMap onAddWaypoint={handleAddWaypoint} />
-            <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="glass-panel p-4">
               <h2 className="text-lg font-semibold mb-3">Waypoints</h2>
               {waypoints.length === 0 ? (
                 <p className="text-gray-500">No waypoints added yet</p>
