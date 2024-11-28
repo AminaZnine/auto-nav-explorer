@@ -47,8 +47,8 @@ const Index = () => {
     setIsRunning(false);
     setSpeed(0);
     toast({
-      variant: "destructive",
-      description: "Emergency stop activated"
+      description: "Emergency stop activated",
+      className: "bg-red-500 text-white"
     });
   };
 
