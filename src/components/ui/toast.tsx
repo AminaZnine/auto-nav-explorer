@@ -1,11 +1,43 @@
 import React, { createContext, useContext, useState } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 
-type ToastType = 'success' | 'error' | 'info';
+export type ToastProps = {
+  id?: string;
+  title?: string;
+  description?: string;
+  action?: ToastActionElement;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
 
-interface ToastContextType {
-  showToast: (message: string, type?: ToastType) => void;
-}
+export type ToastActionElement = React.ReactElement;
+
+export const Toast: React.FC<ToastProps> = ({ title, description }) => (
+  <View style={styles.toast}>
+    {title && <Text style={styles.title}>{title}</Text>}
+    {description && <Text style={styles.description}>{description}</Text>}
+  </View>
+);
+
+export const ToastTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Text style={styles.title}>{children}</Text>
+);
+
+export const ToastDescription: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Text style={styles.description}>{children}</Text>
+);
+
+export const ToastClose: React.FC = () => (
+  <View style={styles.closeButton} />
+);
+
+export const ToastViewport: React.FC = () => (
+  <View style={styles.viewport} />
+);
+
+type ToastContextType = {
+  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+};
 
 const ToastContext = createContext<ToastContextType>({
   showToast: () => {},
@@ -16,10 +48,10 @@ export const useToast = () => useContext(ToastContext);
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
-  const [type, setType] = useState<ToastType>('info');
+  const [type, setType] = useState<'success' | 'error' | 'info'>('info');
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
-  const showToast = (msg: string, toastType: ToastType = 'info') => {
+  const showToast = (msg: string, toastType: 'success' | 'error' | 'info' = 'info') => {
     setMessage(msg);
     setType(toastType);
     setVisible(true);
@@ -39,26 +71,12 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     ]).start(() => setVisible(false));
   };
 
-  const getBackgroundColor = () => {
-    switch (type) {
-      case 'success': return '#4CAF50';
-      case 'error': return '#F44336';
-      case 'info': return '#2196F3';
-      default: return '#2196F3';
-    }
-  };
-
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {visible && (
-        <Animated.View
-          style={[
-            styles.toast,
-            { opacity: fadeAnim, backgroundColor: getBackgroundColor() }
-          ]}
-        >
-          <Text style={styles.text}>{message}</Text>
+        <Animated.View style={[styles.toastContainer, { opacity: fadeAnim }]}>
+          <Text style={styles.toastText}>{message}</Text>
         </Animated.View>
       )}
     </ToastContext.Provider>
@@ -67,6 +85,35 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 
 const styles = StyleSheet.create({
   toast: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+  },
+  closeButton: {
+    width: 24,
+    height: 24,
+  },
+  viewport: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  toastContainer: {
     position: 'absolute',
     bottom: 40,
     left: 20,
@@ -75,12 +122,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
-  text: {
+  toastText: {
     color: '#fff',
     textAlign: 'center',
   },
