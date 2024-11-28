@@ -1,27 +1,26 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
+import { ToastProvider } from './components/ui/toast';
 
+const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ThemeProvider defaultTheme="light" attribute="class">
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
+  <QueryClientProvider client={queryClient}>
+    <NavigationContainer>
+      <ToastProvider>
+        <Stack.Navigator>
+          <Stack.Screen 
+            name="Home" 
+            component={Index}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </ToastProvider>
+    </NavigationContainer>
+  </QueryClientProvider>
 );
 
 export default App;

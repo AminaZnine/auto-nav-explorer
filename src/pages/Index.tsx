@@ -1,13 +1,13 @@
 import { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { CarStatus } from "@/components/CarStatus";
-import { CoordinateInput } from "@/components/CoordinateInput";
 import { Controls } from "@/components/Controls";
 import { DirectionalControls } from "@/components/DirectionalControls";
 import { SpeedControl } from "@/components/SpeedControl";
 import { ModeSelector } from "@/components/ModeSelector";
 import { WaypointMap } from "@/components/WaypointMap";
-import { toast } from "sonner";
+import { useToast } from "@/components/ui/toast";
 import { Bot, Navigation } from "lucide-react";
 
 interface Coordinate {
@@ -21,8 +21,8 @@ const Index = () => {
   const [waypoints, setWaypoints] = useState<Coordinate[]>([]);
   const [speed, setSpeed] = useState(15);
   const [mode, setMode] = useState<"manual" | "waypoint">("manual");
+  const { showToast } = useToast();
 
-  // Simulated car status - in real app, this would come from Arduino
   const carStatus = {
     battery: 85,
     obstacleDistance: null,
@@ -31,18 +31,18 @@ const Index = () => {
 
   const handleAddWaypoint = (coordinate: Coordinate) => {
     setWaypoints([...waypoints, coordinate]);
-    toast.success("Waypoint added successfully");
+    showToast("Waypoint added successfully", "success");
   };
 
   const handleToggleRunning = () => {
     setIsRunning(!isRunning);
-    toast.info(isRunning ? "Mission paused" : "Mission resumed");
+    showToast(isRunning ? "Mission paused" : "Mission resumed", "info");
   };
 
   const handleEmergencyStop = () => {
     setIsRunning(false);
     setSpeed(0);
-    toast.error("Emergency stop activated");
+    showToast("Emergency stop activated", "error");
   };
 
   const handleDirectionPress = (direction: 'up' | 'down' | 'left' | 'right') => {
@@ -53,7 +53,7 @@ const Index = () => {
       left: "Turning left",
       right: "Turning right"
     };
-    toast.info(directionMessages[direction]);
+    showToast(directionMessages[direction], "info");
   };
 
   const handleSpeedChange = (newSpeed: number) => {
@@ -63,25 +63,23 @@ const Index = () => {
 
   const handleModeChange = (newMode: "manual" | "waypoint") => {
     setMode(newMode);
-    toast.info(`Switched to ${newMode} mode`);
+    showToast(`Switched to ${newMode} mode`, "info");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-purple-50/50 dark:to-purple-950/10 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <Bot className="w-8 h-8 text-purple-500" />
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-700">
-              Auto-Nav Explorer
-            </h1>
-            <Navigation className="w-8 h-8 text-purple-500" />
-          </div>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <View style={styles.titleContainer}>
+            <Bot size={32} color="#9b87f5" />
+            <Text style={styles.title}>Auto-Nav Explorer</Text>
+            <Navigation size={32} color="#9b87f5" />
+          </View>
           <ConnectionStatus isConnected={isConnected} />
-        </div>
+        </View>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-6">
+        <View style={styles.content}>
+          <View style={styles.column}>
             <ModeSelector mode={mode} onModeChange={handleModeChange} />
             <CarStatus {...carStatus} />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
@@ -90,44 +88,111 @@ const Index = () => {
               onToggleRunning={handleToggleRunning}
               onEmergencyStop={handleEmergencyStop}
             />
-            <div className={mode === "waypoint" ? "opacity-50 pointer-events-none" : ""}>
+            <View style={[styles.section, mode === "waypoint" && styles.disabled]}>
               <DirectionalControls onDirectionPress={handleDirectionPress} />
-            </div>
-          </div>
+            </View>
+          </View>
           
-          <div className={`space-y-6 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
-            <CoordinateInput onAddWaypoint={handleAddWaypoint} />
+          <View style={[styles.column, mode === "manual" && styles.disabled]}>
             <WaypointMap onAddWaypoint={handleAddWaypoint} />
-            <div className="glass-panel p-4 space-y-4">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Navigation className="w-5 h-5 text-purple-500" />
-                Waypoints
-              </h2>
+            <View style={styles.waypointList}>
+              <Text style={styles.sectionTitle}>Waypoints</Text>
               {waypoints.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No waypoints added yet</p>
+                <Text style={styles.emptyText}>No waypoints added yet</Text>
               ) : (
-                <ul className="space-y-2">
-                  {waypoints.map((wp, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between p-2 rounded-lg bg-background/50 dark:bg-background/20 transition-colors duration-200 hover:bg-background/70 dark:hover:bg-background/30"
-                    >
-                      <span className="text-sm">
-                        Point {index + 1}: ({wp.lat.toFixed(6)}, {wp.lng.toFixed(6)})
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {index === 0 ? "Current Target" : "Queued"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                waypoints.map((wp, index) => (
+                  <View key={index} style={styles.waypointItem}>
+                    <Text style={styles.waypointText}>
+                      Point {index + 1}: ({wp.lat.toFixed(6)}, {wp.lng.toFixed(6)})
+                    </Text>
+                    <Text style={styles.waypointStatus}>
+                      {index === 0 ? "Current Target" : "Queued"}
+                    </Text>
+                  </View>
+                ))
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#9b87f5',
+  },
+  content: {
+    padding: 16,
+    gap: 24,
+  },
+  column: {
+    gap: 24,
+  },
+  section: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  waypointList: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  emptyText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  waypointItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  waypointText: {
+    fontSize: 14,
+  },
+  waypointStatus: {
+    fontSize: 12,
+    color: '#666',
+  },
+});
 
 export default Index;
