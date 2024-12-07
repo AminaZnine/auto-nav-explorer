@@ -1,4 +1,4 @@
-import { Battery, Navigation2, Shield, Bot, MapPin, RefreshCw } from "lucide-react";
+import { Battery, Navigation2, Shield, Bot, Car, RefreshCw } from "lucide-react";
 import { formatDistance } from "date-fns";
 
 interface CarStatusProps {
@@ -73,7 +73,7 @@ export const CarStatus = ({
       {gpsLocation && (
         <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <MapPin className="w-4 h-4 text-purple-500" />
+            <Car className="w-4 h-4 text-purple-500" />
             <span className="text-sm font-medium">Current Location</span>
           </div>
           <div className="grid grid-cols-1 gap-2 text-sm">
