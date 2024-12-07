@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MapPin, Send, MapPinOff } from "lucide-react";
+import { MapPin, Send, Trash } from "lucide-react";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -70,23 +70,13 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
     <div className="glass-panel rounded-xl p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Visual Waypoint Map</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={handleSendInstructions}
-            className="p-2 hover:bg-purple-100 rounded-lg transition-colors text-purple-500"
-            title="Send instructions to vehicle"
-          >
-            <Send className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleClearWaypoints}
-            className="flex items-center gap-2 px-3 py-2 hover:bg-red-100 rounded-lg transition-colors text-red-500"
-            title="Clear all waypoints"
-          >
-            <MapPinOff className="w-5 h-5" />
-            <span>Clear Waypoints</span>
-          </button>
-        </div>
+        <button
+          onClick={handleSendInstructions}
+          className="p-2 hover:bg-purple-100 rounded-lg transition-colors text-purple-500"
+          title="Send instructions to vehicle"
+        >
+          <Send className="w-5 h-5" />
+        </button>
       </div>
 
       <div
@@ -169,12 +159,23 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
             </div>
           </div>
         )}
-
+        
         <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6 opacity-25" />
       </div>
-      <p className="text-sm text-muted-foreground">
-        Click anywhere on the map to add a waypoint. Points will be automatically connected in sequence.
-      </p>
+
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-muted-foreground">
+          Click anywhere on the map to add a waypoint. Points will be automatically connected in sequence.
+        </p>
+        <button
+          onClick={handleClearWaypoints}
+          className="flex items-center gap-2 px-3 py-2 hover:bg-red-100 rounded-lg transition-colors text-red-500 ml-4"
+          title="Clear all waypoints"
+        >
+          <Trash className="w-5 h-5" />
+          <span>Clear Waypoints</span>
+        </button>
+      </div>
     </div>
   );
 };
