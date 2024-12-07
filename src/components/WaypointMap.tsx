@@ -67,23 +67,24 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
   };
 
   return (
-    <div className="glass-panel rounded-xl p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Visual Waypoint Map</h2>
-        <button
-          onClick={handleSendInstructions}
-          className="p-2 hover:bg-purple-100 rounded-lg transition-colors text-purple-500"
-          title="Send instructions to vehicle"
-        >
-          <Send className="w-5 h-5" />
-        </button>
-      </div>
+    <div className="space-y-4">
+      <div className="glass-panel rounded-xl p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Visual Waypoint Map</h2>
+          <button
+            onClick={handleSendInstructions}
+            className="p-2 hover:bg-purple-100 rounded-lg transition-colors text-purple-500"
+            title="Send instructions to vehicle"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
 
-      <div
-        ref={mapRef}
-        className="relative w-full h-[300px] bg-slate-100 dark:bg-slate-800/50 rounded-lg cursor-crosshair overflow-hidden"
-        onClick={handleClick}
-      >
+        <div
+          ref={mapRef}
+          className="relative w-full h-[300px] bg-slate-100 dark:bg-slate-800/50 rounded-lg cursor-crosshair overflow-hidden"
+          onClick={handleClick}
+        >
         <div className="absolute inset-0 grid grid-cols-8 grid-rows-8">
           {Array.from({ length: 64 }).map((_, i) => (
             <div key={i} className="border border-slate-200 dark:border-slate-700/50" />
@@ -159,17 +160,19 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
             </div>
           </div>
         )}
-        
-        <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6 opacity-25" />
-      </div>
+          
+          <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6 opacity-25" />
+        </div>
 
-      <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           Click anywhere on the map to add a waypoint. Points will be automatically connected in sequence.
         </p>
+      </div>
+
+      <div className="glass-panel rounded-xl p-3 flex justify-center">
         <button
           onClick={handleClearWaypoints}
-          className="flex items-center gap-2 px-3 py-2 hover:bg-red-100 rounded-lg transition-colors text-red-500 ml-4"
+          className="control-button flex items-center gap-2 px-6 py-2.5 w-full sm:w-auto"
           title="Clear all waypoints"
         >
           <Trash className="w-5 h-5" />
