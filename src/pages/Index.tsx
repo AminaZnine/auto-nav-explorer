@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { CarStatus } from "@/components/CarStatus";
 import { Controls } from "@/components/Controls";
@@ -17,16 +17,40 @@ interface Coordinate {
 const Index = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
   const [waypoints, setWaypoints] = useState<Coordinate[]>([]);
   const [speed, setSpeed] = useState(15);
   const [mode, setMode] = useState<"manual" | "waypoint">("manual");
   const { toast } = useToast();
 
+  // Simulated car location for demonstration
+  const [carLocation, setCarLocation] = useState<Coordinate & { timestamp: Date }>({
+    lat: 0,
+    lng: 0,
+    timestamp: new Date()
+  });
+
   const carStatus = {
     battery: 85,
     obstacleDistance: null,
     speed: speed,
+    gpsLocation: carLocation
   };
+
+  // Simulate periodic GPS updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isRunning && isMoving) {
+        setCarLocation(prev => ({
+          lat: prev.lat + (Math.random() - 0.5) * 0.001,
+          lng: prev.lng + (Math.random() - 0.5) * 0.001,
+          timestamp: new Date()
+        }));
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isRunning, isMoving]);
 
   const handleAddWaypoint = (coordinate: Coordinate) => {
     setWaypoints([...waypoints, coordinate]);
@@ -38,6 +62,7 @@ const Index = () => {
 
   const handleToggleRunning = () => {
     setIsRunning(!isRunning);
+    setIsMoving(!isRunning);
     toast({
       description: isRunning ? "Mission paused" : "Mission resumed"
     });
@@ -45,6 +70,7 @@ const Index = () => {
 
   const handleEmergencyStop = () => {
     setIsRunning(false);
+    setIsMoving(false);
     setSpeed(0);
     toast({
       description: "Emergency stop activated",
@@ -60,6 +86,8 @@ const Index = () => {
       left: "Turning left",
       right: "Turning right"
     };
+    setIsMoving(true);
+    setTimeout(() => setIsMoving(false), 1000);
     toast({
       description: directionMessages[direction]
     });
@@ -77,6 +105,17 @@ const Index = () => {
     });
   };
 
+  const handleRefreshStatus = () => {
+    toast({
+      description: "Refreshing vehicle status..."
+    });
+    // Here you would typically fetch the latest status from the vehicle
+    setCarLocation(prev => ({
+      ...prev,
+      timestamp: new Date()
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
@@ -92,7 +131,7 @@ const Index = () => {
         <main className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <ModeSelector mode={mode} onModeChange={handleModeChange} />
-            <CarStatus {...carStatus} />
+            <CarStatus {...carStatus} onRefreshStatus={handleRefreshStatus} />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
             <Controls
               isRunning={isRunning}
@@ -105,26 +144,11 @@ const Index = () => {
           </div>
           
           <div className={`space-y-4 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
-            <WaypointMap onAddWaypoint={handleAddWaypoint} />
-            <div className="glass-panel p-4">
-              <h2 className="text-lg font-semibold mb-3">Waypoints</h2>
-              {waypoints.length === 0 ? (
-                <p className="text-gray-500">No waypoints added yet</p>
-              ) : (
-                <div className="space-y-2">
-                  {waypoints.map((wp, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                      <span className="text-sm">
-                        Point {index + 1}: ({wp.lat.toFixed(6)}, {wp.lng.toFixed(6)})
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {index === 0 ? "Current Target" : "Queued"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <WaypointMap 
+              onAddWaypoint={handleAddWaypoint} 
+              carLocation={carLocation}
+              isMoving={isMoving}
+            />
           </div>
         </main>
       </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, Send, Trash, MapPinOff } from "lucide-react";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -9,12 +9,14 @@ interface Coordinate {
 
 interface WaypointMapProps {
   onAddWaypoint: (coordinate: Coordinate) => void;
+  carLocation?: Coordinate;
+  isMoving?: boolean;
 }
 
-export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
-  const [isDragging, setIsDragging] = useState(false);
+export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMapProps) => {
   const [points, setPoints] = useState<Coordinate[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
+  const [carPosition, setCarPosition] = useState<{ x: number; y: number } | null>(null);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!mapRef.current) return;
@@ -23,7 +25,6 @@ export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    // Convert pixel coordinates to lat/lng (simplified mapping)
     const lat = ((rect.height - y) / rect.height) * 90;
     const lng = ((x / rect.width) * 360) - 180;
 
@@ -33,7 +34,6 @@ export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
     toast.success("Waypoint added at coordinates: " + lat.toFixed(6) + ", " + lng.toFixed(6));
   };
 
-  // Convert lat/lng to pixel coordinates for display
   const getPixelCoordinates = (coord: Coordinate) => {
     if (!mapRef.current) return { x: 0, y: 0 };
     const rect = mapRef.current.getBoundingClientRect();
@@ -44,9 +44,50 @@ export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
     return { x, y };
   };
 
+  useEffect(() => {
+    if (carLocation) {
+      const pos = getPixelCoordinates(carLocation);
+      setCarPosition(pos);
+    }
+  }, [carLocation]);
+
+  const handleClearWaypoints = () => {
+    setPoints([]);
+    toast.info("All waypoints cleared");
+  };
+
+  const handleSendInstructions = () => {
+    if (points.length === 0) {
+      toast.error("No waypoints to send");
+      return;
+    }
+    toast.success("Instructions sent to vehicle");
+    // Here you would typically send the waypoints to the car
+    console.log("Sending waypoints to car:", points);
+  };
+
   return (
     <div className="glass-panel rounded-xl p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Visual Waypoint Map</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Visual Waypoint Map</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={handleSendInstructions}
+            className="p-2 hover:bg-purple-100 rounded-lg transition-colors text-purple-500"
+            title="Send instructions to vehicle"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleClearWaypoints}
+            className="p-2 hover:bg-red-100 rounded-lg transition-colors text-red-500"
+            title="Clear all waypoints"
+          >
+            <MapPinOff className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
       <div
         ref={mapRef}
         className="relative w-full h-[300px] bg-slate-100 dark:bg-slate-800/50 rounded-lg cursor-crosshair overflow-hidden"
@@ -100,6 +141,21 @@ export const WaypointMap = ({ onAddWaypoint }: WaypointMapProps) => {
             </div>
           );
         })}
+
+        {/* Draw car position */}
+        {carPosition && (
+          <div
+            className={`absolute w-4 h-4 transition-all duration-500 ${
+              isMoving ? 'animate-pulse' : ''
+            }`}
+            style={{
+              left: `${carPosition.x - 8}px`,
+              top: `${carPosition.y - 8}px`,
+            }}
+          >
+            <div className="w-full h-full rounded-full bg-car-success animate-pulse" />
+          </div>
+        )}
 
         <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6 opacity-25" />
       </div>
