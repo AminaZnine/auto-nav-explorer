@@ -142,18 +142,30 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
           );
         })}
 
-        {/* Draw car position */}
+        {/* Draw car position with enhanced animation */}
         {carPosition && (
           <div
-            className={`absolute w-4 h-4 transition-all duration-500 ${
-              isMoving ? 'animate-pulse' : ''
-            }`}
+            className={`absolute w-4 h-4 transition-all duration-500`}
             style={{
               left: `${carPosition.x - 8}px`,
               top: `${carPosition.y - 8}px`,
+              transform: isMoving ? 'scale(1.2)' : 'scale(1)',
             }}
           >
-            <div className="w-full h-full rounded-full bg-car-success animate-pulse" />
+            <div className={`
+              w-full h-full rounded-full 
+              bg-car-success
+              ${isMoving ? 'animate-[pulse_1s_ease-in-out_infinite]' : ''}
+              relative
+            `}>
+              {/* Trajectory trail animation */}
+              {isMoving && (
+                <div className="absolute inset-0 -z-10">
+                  <div className="absolute inset-0 rounded-full bg-car-success animate-ping opacity-75"></div>
+                  <div className="absolute inset-0 rounded-full bg-car-success animate-pulse opacity-50"></div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
