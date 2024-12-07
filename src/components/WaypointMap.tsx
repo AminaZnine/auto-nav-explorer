@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MapPin, Send, Trash, CarFront } from "lucide-react";
+import { MapPin, Send, Trash } from "lucide-react";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -85,83 +85,81 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
           className="relative w-full h-[300px] bg-slate-100 dark:bg-slate-800/50 rounded-lg cursor-crosshair overflow-hidden"
           onClick={handleClick}
         >
-          <div className="absolute inset-0 grid grid-cols-8 grid-rows-8">
-            {Array.from({ length: 64 }).map((_, i) => (
-              <div key={i} className="border border-slate-200 dark:border-slate-700/50" />
-            ))}
-          </div>
-
-          {/* Draw connecting lines between points */}
-          <svg className="absolute inset-0 pointer-events-none">
-            {points.map((point, index) => {
-              if (index === 0) return null;
-              const prevPoint = points[index - 1];
-              const start = getPixelCoordinates(prevPoint);
-              const end = getPixelCoordinates(point);
-              
-              return (
-                <line
-                  key={`line-${index}`}
-                  x1={start.x}
-                  y1={start.y}
-                  x2={end.x}
-                  y2={end.y}
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="2"
-                  strokeDasharray="4"
-                  className="animate-fade-in"
-                />
-              );
-            })}
-          </svg>
-
-          {/* Draw waypoints */}
+        <div className="absolute inset-0 grid grid-cols-8 grid-rows-8">
+          {Array.from({ length: 64 }).map((_, i) => (
+            <div key={i} className="border border-slate-200 dark:border-slate-700/50" />
+          ))}
+        </div>
+        
+        {/* Draw connecting lines between points */}
+        <svg className="absolute inset-0 pointer-events-none">
           {points.map((point, index) => {
-            const { x, y } = getPixelCoordinates(point);
+            if (index === 0) return null;
+            const prevPoint = points[index - 1];
+            const start = getPixelCoordinates(prevPoint);
+            const end = getPixelCoordinates(point);
+            
             return (
-              <div
-                key={`point-${index}`}
-                className="absolute w-3 h-3 rounded-full bg-primary animate-fade-in"
-                style={{
-                  left: `${x - 6}px`,
-                  top: `${y - 6}px`,
-                }}
-              >
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium">
-                  {index + 1}
-                </div>
-              </div>
+              <line
+                key={`line-${index}`}
+                x1={start.x}
+                y1={start.y}
+                x2={end.x}
+                y2={end.y}
+                stroke="hsl(var(--primary))"
+                strokeWidth="2"
+                strokeDasharray="4"
+                className="animate-fade-in"
+              />
             );
           })}
+        </svg>
 
-          {/* Draw car position with car icon */}
-          {carPosition && (
+        {/* Draw points */}
+        {points.map((point, index) => {
+          const { x, y } = getPixelCoordinates(point);
+          return (
             <div
-              className={`absolute transition-all duration-500`}
+              key={`point-${index}`}
+              className="absolute w-3 h-3 rounded-full bg-primary animate-fade-in"
               style={{
-                left: `${carPosition.x - 12}px`,
-                top: `${carPosition.y - 12}px`,
-                transform: isMoving ? 'scale(1.2)' : 'scale(1)',
+                left: `${x - 6}px`,
+                top: `${y - 6}px`,
               }}
             >
-              <div className={`
-                relative
-                ${isMoving ? 'animate-[pulse_1s_ease-in-out_infinite]' : ''}
-              `}>
-                <CarFront className="w-6 h-6 text-car-success" />
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium bg-white/80 dark:bg-gray-800/80 px-2 py-0.5 rounded-full shadow-sm">
-                  Current Location
-                </div>
-                {/* Trajectory trail animation */}
-                {isMoving && (
-                  <div className="absolute inset-0 -z-10">
-                    <div className="absolute inset-0 rounded-full bg-car-success animate-ping opacity-75"></div>
-                    <div className="absolute inset-0 rounded-full bg-car-success animate-pulse opacity-50"></div>
-                  </div>
-                )}
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium">
+                {index + 1}
               </div>
             </div>
-          )}
+          );
+        })}
+
+        {/* Draw car position with enhanced animation */}
+        {carPosition && (
+          <div
+            className={`absolute w-4 h-4 transition-all duration-500`}
+            style={{
+              left: `${carPosition.x - 8}px`,
+              top: `${carPosition.y - 8}px`,
+              transform: isMoving ? 'scale(1.2)' : 'scale(1)',
+            }}
+          >
+            <div className={`
+              w-full h-full rounded-full 
+              bg-car-success
+              ${isMoving ? 'animate-[pulse_1s_ease-in-out_infinite]' : ''}
+              relative
+            `}>
+              {/* Trajectory trail animation */}
+              {isMoving && (
+                <div className="absolute inset-0 -z-10">
+                  <div className="absolute inset-0 rounded-full bg-car-success animate-ping opacity-75"></div>
+                  <div className="absolute inset-0 rounded-full bg-car-success animate-pulse opacity-50"></div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
           
           <MapPin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-6 h-6 opacity-25" />
         </div>
