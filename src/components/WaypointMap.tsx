@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MapPin, Send, Trash, MapPinOff } from "lucide-react";
+import { MapPin, Send, MapPinOff } from "lucide-react";
 import { toast } from "sonner";
 
 interface Coordinate {
@@ -80,10 +80,11 @@ export const WaypointMap = ({ onAddWaypoint, carLocation, isMoving }: WaypointMa
           </button>
           <button
             onClick={handleClearWaypoints}
-            className="p-2 hover:bg-red-100 rounded-lg transition-colors text-red-500"
+            className="flex items-center gap-2 px-3 py-2 hover:bg-red-100 rounded-lg transition-colors text-red-500"
             title="Clear all waypoints"
           >
             <MapPinOff className="w-5 h-5" />
+            <span>Clear Waypoints</span>
           </button>
         </div>
       </div>
