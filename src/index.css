@@ -76,4 +76,16 @@
            hover:from-purple-500 hover:to-purple-600
            text-white font-medium;
   }
+
+  .leaflet-container {
+    z-index: 1;
+  }
+
+  .leaflet-popup-content-wrapper {
+    @apply bg-background text-foreground;
+  }
+
+  .leaflet-popup-tip {
+    @apply bg-background;
+  }
 }
