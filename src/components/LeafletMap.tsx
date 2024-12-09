@@ -30,7 +30,9 @@ const MapClickHandler = ({ onMapClick }: { onMapClick: (lat: number, lng: number
 };
 
 export const LeafletMap = ({ onMapClick, carLocation, waypoints, isMoving }: MapProps) => {
-  const center = carLocation || { lat: 0, lng: 0 };
+  // Set Lappeenranta as the default center
+  const defaultCenter = { lat: 61.0587, lng: 28.1891 };
+  const center = carLocation || defaultCenter;
 
   return (
     <MapContainer
