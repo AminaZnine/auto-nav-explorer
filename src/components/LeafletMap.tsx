@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
@@ -34,22 +34,28 @@ const MapCenter = ({ center }: { center: Coordinate }) => {
   return null;
 };
 
+// Component to handle map clicks
+const MapEvents = ({ onMapClick }: { onMapClick: (coord: Coordinate) => void }) => {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      onMapClick({ lat, lng });
+    },
+  });
+  return null;
+};
+
 export const LeafletMap = ({ points, carLocation, onMapClick }: LeafletMapProps) => {
   const LAPPEENRANTA = { lat: 61.0587, lng: 28.1891 };
-
-  const handleMapClick = (e: any) => {
-    const { lat, lng } = e.latlng;
-    onMapClick({ lat, lng });
-  };
 
   return (
     <MapContainer
       center={[LAPPEENRANTA.lat, LAPPEENRANTA.lng]}
       zoom={13}
       style={{ height: '300px', width: '100%', borderRadius: '0.75rem' }}
-      onClick={handleMapClick}
     >
       <MapCenter center={LAPPEENRANTA} />
+      <MapEvents onMapClick={onMapClick} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
