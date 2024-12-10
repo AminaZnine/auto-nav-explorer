@@ -23,6 +23,7 @@ const Index = () => {
   const [mode, setMode] = useState<"manual" | "waypoint">("manual");
   const { toast } = useToast();
 
+  // Simulated car location for demonstration
   const [carLocation, setCarLocation] = useState<Coordinate & { timestamp: Date }>({
     lat: 0,
     lng: 0,
@@ -36,6 +37,7 @@ const Index = () => {
     gpsLocation: carLocation
   };
 
+  // Simulate periodic GPS updates
   useEffect(() => {
     const interval = setInterval(() => {
       if (isRunning && isMoving) {
@@ -107,6 +109,7 @@ const Index = () => {
     toast({
       description: "Refreshing vehicle status..."
     });
+    // Here you would typically fetch the latest status from the vehicle
     setCarLocation(prev => ({
       ...prev,
       timestamp: new Date()
@@ -114,21 +117,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-900 dark:to-purple-900 p-2 sm:p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        <header className="glass-panel p-4 flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-in">
+        <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
             <Bot className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
-              Auto-Nav Explorer
-            </h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-purple-500">Auto-Nav Explorer</h1>
             <Navigation className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
           </div>
           <ConnectionStatus isConnected={isConnected} />
         </header>
 
         <main className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div className="space-y-4 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="space-y-4">
             <ModeSelector mode={mode} onModeChange={handleModeChange} />
             <CarStatus {...carStatus} onRefreshStatus={handleRefreshStatus} />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
@@ -137,15 +138,12 @@ const Index = () => {
               onToggleRunning={handleToggleRunning}
               onEmergencyStop={handleEmergencyStop}
             />
-            <div className={`transition-opacity duration-300 ${mode === "waypoint" ? "opacity-50 pointer-events-none" : ""}`}>
+            <div className={`${mode === "waypoint" ? "opacity-50 pointer-events-none" : ""}`}>
               <DirectionalControls onDirectionPress={handleDirectionPress} />
             </div>
           </div>
           
-          <div 
-            className={`space-y-4 animate-fade-in transition-opacity duration-300 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}
-            style={{ animationDelay: "0.2s" }}
-          >
+          <div className={`space-y-4 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
             <WaypointMap 
               onAddWaypoint={handleAddWaypoint} 
               carLocation={carLocation}

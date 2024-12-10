@@ -34,7 +34,7 @@ export const CarStatus = ({
   };
 
   return (
-    <div className="glass-panel p-4 space-y-4 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+    <div className="glass-panel rounded-xl p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Bot className="w-5 h-5 text-purple-500" />
@@ -43,7 +43,7 @@ export const CarStatus = ({
         {onRefreshStatus && (
           <button 
             onClick={onRefreshStatus}
-            className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <RefreshCw className="w-4 h-4 text-purple-500" />
           </button>
@@ -51,19 +51,19 @@ export const CarStatus = ({
       </div>
       
       <div className="grid grid-cols-3 gap-4">
-        <div className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white/50 dark:bg-white/5 transition-colors">
+        <div className="flex flex-col items-center gap-2">
           <Battery className={`w-6 h-6 ${getBatteryColor(battery)}`} />
           <span className="text-sm font-medium">{battery}%</span>
           <span className="text-xs text-muted-foreground">Battery</span>
         </div>
-        <div className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white/50 dark:bg-white/5 transition-colors">
+        <div className="flex flex-col items-center gap-2">
           <Shield className={`w-6 h-6 ${getObstacleColor(obstacleDistance)}`} />
           <span className="text-sm font-medium">
             {obstacleDistance ? `${obstacleDistance}cm` : 'N/A'}
           </span>
           <span className="text-xs text-muted-foreground">Obstacle</span>
         </div>
-        <div className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white/50 dark:bg-white/5 transition-colors">
+        <div className="flex flex-col items-center gap-2">
           <Navigation2 className="w-6 h-6 text-purple-500" />
           <span className="text-sm font-medium">{speed} km/h</span>
           <span className="text-xs text-muted-foreground">Speed</span>
@@ -71,7 +71,7 @@ export const CarStatus = ({
       </div>
 
       {gpsLocation && (
-        <div className="mt-4 p-3 bg-white/50 dark:bg-white/5 rounded-lg transition-colors">
+        <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <Car className="w-4 h-4 text-purple-500" />
             <span className="text-sm font-medium">Current Location</span>
