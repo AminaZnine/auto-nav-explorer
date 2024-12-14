@@ -6,8 +6,10 @@ import { DirectionalControls } from "@/components/DirectionalControls";
 import { SpeedControl } from "@/components/SpeedControl";
 import { ModeSelector } from "@/components/ModeSelector";
 import { WaypointMap } from "@/components/WaypointMap";
+import { SensorDataChart } from "@/components/SensorDataChart";
 import { useToast } from "@/components/ui/use-toast";
 import { Bot, Navigation } from "lucide-react";
+import { useSensorData } from "@/services/iotService";
 
 interface Coordinate {
   lat: number;
@@ -116,6 +118,29 @@ const Index = () => {
     }));
   };
 
+  // Add IoT data integration
+  const { data: sensorData, isError } = useSensorData();
+
+  useEffect(() => {
+    if (isError) {
+      toast({
+        description: "Failed to fetch sensor data",
+        variant: "destructive"
+      });
+    }
+  }, [isError, toast]);
+
+  useEffect(() => {
+    if (sensorData) {
+      // Update car status with real sensor data
+      setCarLocation({
+        lat: sensorData.location.lat,
+        lng: sensorData.location.lng,
+        timestamp: sensorData.timestamp
+      });
+    }
+  }, [sensorData]);
+
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
@@ -131,7 +156,13 @@ const Index = () => {
         <main className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <ModeSelector mode={mode} onModeChange={handleModeChange} />
-            <CarStatus {...carStatus} onRefreshStatus={handleRefreshStatus} />
+            <CarStatus 
+              battery={sensorData?.batteryLevel ?? carStatus.battery}
+              obstacleDistance={sensorData?.obstacleDistance ?? carStatus.obstacleDistance}
+              speed={sensorData?.speed ?? speed}
+              gpsLocation={carLocation}
+              onRefreshStatus={handleRefreshStatus}
+            />
             <SpeedControl onSpeedChange={handleSpeedChange} currentSpeed={speed} />
             <Controls
               isRunning={isRunning}
@@ -143,12 +174,25 @@ const Index = () => {
             </div>
           </div>
           
-          <div className={`space-y-4 ${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
-            <WaypointMap 
-              onAddWaypoint={handleAddWaypoint} 
-              carLocation={carLocation}
-              isMoving={isMoving}
-            />
+          <div className="space-y-4">
+            <div className={`${mode === "manual" ? "opacity-50 pointer-events-none" : ""}`}>
+              <WaypointMap 
+                onAddWaypoint={handleAddWaypoint} 
+                carLocation={carLocation}
+                isMoving={isMoving}
+              />
+            </div>
+            {sensorData && (
+              <SensorDataChart 
+                data={[
+                  {
+                    timestamp: sensorData.timestamp,
+                    temperature: 25, // Replace with actual temperature data
+                    humidity: 60, // Replace with actual humidity data
+                  }
+                ]} 
+              />
+            )}
           </div>
         </main>
       </div>
